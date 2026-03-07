@@ -1,19 +1,24 @@
 package edu.neumont.csc150.models;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class Account {
 	private String accountID;
-	private String fName;
-	private String lName;
+	private Person owner;
 	private Card card;
 	private List<Transaction> transactions;
 
-	public Account(String accountID, String fName, String lName) {
+	public Account(String accountID, Person owner) {
 		setAccountID(accountID);
-		setFName(fName);
-		setLName(lName);
+		setOwner(owner);
+		transactions = new ArrayList<>();
 	}
 
 //region =========== GETTERS||SETTERS ===========
@@ -27,23 +32,53 @@ public class Account {
 		this.accountID = accountID;
 	}
 
-	public String getFName() {
-		return fName;
+	public Person getOwner() {
+		return owner;
 	}
 
-	private void setFName(String fName) {
-		this.fName = fName;
+	public void setOwner(Person owner) {
+		this.owner = owner;
 	}
 
-	public String getLName() {
-		return lName;
+	public Card getCard() {
+		return card;
 	}
 
-	private void setLName(String lName) {
-		this.lName = lName;
+	//	TODO: Get Card set to owner
+	protected void setCard(Card card) {
+		if (this.card == null) {
+			this.card = card;
+		}
 	}
 
-//endregion
+	public List<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	private void setTransactions(List<Transaction> transactions) {
+		this.transactions = transactions;
+	}
+
+	//endregion
+
+	/**
+	 * Captures the date and time at the time of being called.
+	 *
+	 * @return {@code String} <b>date</b> and <b>time</b> formatted as m/d/yy, h:mm
+	 */
+	protected String createTimestamp() {
+		LocalDateTime localDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.now());
+		DateTimeFormatter customFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);
+		String timestamp = localDateTime.format(customFormatter);
+
+		return timestamp;
+	}
+
+	protected void swipeCard(float amount) {
+
+		Transaction transaction = new Transaction(amount, createTimestamp());
+		transactions.add(transaction);
+	}
 
 	private boolean deposit() {
 //		if success
@@ -62,10 +97,12 @@ public class Account {
 	@Override
 	public String toString() {
 		String string = "";
-		string += "Account ID:\n\t" + getAccountID();
-		string += "\nName:\n\t" + getFName() + " " + getLName();
-		string += "\nCard:\n\t" + card;
-		string += "\nTransaction History:\n\t" + transactions;
+		string += "\n\tAccount ID:\n\t\t" + getAccountID();
+		string += "\n\tName:\n\t\t" + owner.getFName() + ' ' + owner.getLName();
+		string += "\n\tCard:\n\t\t" + card;
+		for (Transaction transaction : getTransactions()) {
+			string += "\n\n\tTransaction History:\n" + transaction;
+		}
 		return string;
 	}
 }
