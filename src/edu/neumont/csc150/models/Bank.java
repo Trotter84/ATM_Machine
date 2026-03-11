@@ -11,6 +11,12 @@ public class Bank {
 	private Account account;
 	private List<Account> accounts;
 
+	//	for demo
+	private String[] availableUIDs = {
+			"f8 d7 cc 05", "39 38 d1 11", "ea da 27 02", "77 50 2b 15"
+	};
+	static int availableUIDCount = 4;
+
 	public Bank() {
 		setBalance(20580000);
 		accounts = new ArrayList<>();
@@ -24,8 +30,11 @@ public class Bank {
 	}
 
 	private void setBalance(int balance) {
-//		TODO: check for restraints
-		this.balance = balance;
+		if (balance < 0) {
+			this.balance = 0;
+		} else {
+			this.balance = balance;
+		}
 	}
 
 	public List<Account> getAccounts() {
@@ -34,28 +43,61 @@ public class Bank {
 
 //endregion
 
-	public Account createAccount(Person person) {
-		String accountID = "123 45 6789";
+	/**
+	 * Creates a new {@code Account} instance and assigns it to an <b>owner</b> {@code Person}.
+	 *
+	 * @param person
+	 *
+	 * @return {@code Account}
+	 */
+	public Account createAccount(Person owner, int initialDeposit) {
 
-		Account account = new Account(accountID, person);
+		Account account = new Account(numGenerator(10), owner, initialDeposit);
 		accounts.add(account);
+		owner.addAccount(account);
 		return account;
 	}
 
+	/**
+	 * Creates a new {@code Card} instance and assigns it to an <b>owner</b> {@code Account}.
+	 *
+	 * @param owner
+	 *
+	 * @return {@code Card}
+	 */
 	public Card createCard(Account owner) {
-		Random random = new Random();
-		StringBuilder cardNum = new StringBuilder();
 
-		for (int i = 0; i < 16; i++) {
-			if (i % 4 == 0 && i != 0) {
-				cardNum.append(' ');
-			}
-			cardNum.append(random.nextInt(10));
-		}
-
-		Card card = new Card(owner, cardNum.toString());
+		Card card = new Card(owner, numGenerator(16));
 		owner.setCard(card);
 		return card;
+	}
+
+	public boolean verifyCard(Card card, Account recipient) {
+		if (card.getCardNum() == recipient.getCard().getCardNum()) {
+//			TODO: call card action
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Generates a <b>String</b> of digits. For creating a new {@code Card} or {@code Account ID}
+	 *
+	 * @param length {@code int} <b>inclusive</b> - how many digits will be created.
+	 *
+	 * @return random digit sequence as String
+	 */
+	private String numGenerator(int length) {
+		Random random = new Random();
+		StringBuilder numString = new StringBuilder();
+
+		for (int i = 0; i < length; i++) {
+			if (i % 4 == 0 && i != 0) {
+				numString.append(' ');
+			}
+			numString.append(random.nextInt(10));
+		}
+		return numString.toString();
 	}
 
 	@Override

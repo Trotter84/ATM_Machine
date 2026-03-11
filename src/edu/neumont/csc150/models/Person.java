@@ -1,15 +1,17 @@
 package edu.neumont.csc150.models;
 
+
 public class Person {
 	private String fName;
 	private String lName;
-	private String dob;
+	private int age;
 	private Account account;
 
-	public Person(String fName, String lName) {
+	public Person(String fName, String lName, int age) {
 		setFName(fName);
 		setLName(lName);
-//		setAccount(account);
+		setAge(age);
+		setAccount(account);
 	}
 
 //region =========== GETTERS||SETTERS ===========
@@ -36,6 +38,18 @@ public class Person {
 		this.lName = lName;
 	}
 
+	public int getAge() {
+		return age;
+	}
+
+	private void setAge(int age) {
+		if (age < 0) {
+			this.age = 0;
+		} else {
+			this.age = age;
+		}
+	}
+
 	public Account getAccount() {
 		return account;
 	}
@@ -46,4 +60,12 @@ public class Person {
 
 //endregion
 
+	protected void addAccount(Account account) {
+		setAccount(account);
+	}
+	
+	@Override
+	public String toString() {
+		return getFName() + ' ' + getLName();
+	}
 }

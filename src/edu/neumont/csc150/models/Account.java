@@ -12,13 +12,16 @@ import java.util.List;
 public class Account {
 	private String accountID;
 	private Person owner;
+	private int balance;
 	private Card card;
 	private List<Transaction> transactions;
 
-	public Account(String accountID, Person owner) {
+	public Account(String accountID, Person owner, int balance) {
+		transactions = new ArrayList<>();
+
 		setAccountID(accountID);
 		setOwner(owner);
-		transactions = new ArrayList<>();
+		setBalance(balance);
 	}
 
 //region =========== GETTERS||SETTERS ===========
@@ -38,6 +41,18 @@ public class Account {
 
 	public void setOwner(Person owner) {
 		this.owner = owner;
+	}
+
+	public int getBalance() {
+		return balance;
+	}
+
+	public void setBalance(int balance) {
+		if (balance < 0) {
+			this.balance = 0;
+		} else {
+			this.balance = balance;
+		}
 	}
 
 	public Card getCard() {
@@ -74,7 +89,7 @@ public class Account {
 		return timestamp;
 	}
 
-	protected void swipeCard(float amount) {
+	public void swipeCard(float amount) {
 
 		Transaction transaction = new Transaction(amount, createTimestamp());
 		transactions.add(transaction);
@@ -99,7 +114,10 @@ public class Account {
 		String string = "";
 		string += "\n\tAccount ID:\n\t\t" + getAccountID();
 		string += "\n\tName:\n\t\t" + owner.getFName() + ' ' + owner.getLName();
-		string += "\n\tCard:\n\t\t" + card;
+		string += "\n\tBalance:\n\t\t$" + getBalance();
+		if (getCard() != null) {
+			string += "\n\tCard:\n\t\t" + getCard();
+		}
 		for (Transaction transaction : getTransactions()) {
 			string += "\n\n\tTransaction History:\n" + transaction;
 		}
