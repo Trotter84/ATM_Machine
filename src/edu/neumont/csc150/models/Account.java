@@ -16,11 +16,11 @@ public class Account {
 	private Card card;
 	private List<Transaction> transactions;
 
-	public Account(String accountID, Person owner, int balance) {
+	public Account(Person owner, String accountID, int balance) {
 		transactions = new ArrayList<>();
 
-		setAccountID(accountID);
 		setOwner(owner);
+		setAccountID(accountID);
 		setBalance(balance);
 	}
 
@@ -32,7 +32,11 @@ public class Account {
 	}
 
 	private void setAccountID(String accountID) {
-		this.accountID = accountID;
+		if (owner.getFName().equalsIgnoreCase("Dev")) {
+			this.accountID = "f8 d7 cc 05";
+		} else {
+			this.accountID = accountID;
+		}
 	}
 
 	public Person getOwner() {
@@ -48,11 +52,7 @@ public class Account {
 	}
 
 	public void setBalance(int balance) {
-		if (balance < 0) {
-			this.balance = 0;
-		} else {
-			this.balance = balance;
-		}
+		this.balance = balance;
 	}
 
 	public Card getCard() {
@@ -89,8 +89,8 @@ public class Account {
 		return timestamp;
 	}
 
-	public void swipeCard(float amount) {
-
+	public void swipeCard(int amount) {
+		setBalance(getBalance() - amount);
 		Transaction transaction = new Transaction(amount, createTimestamp());
 		transactions.add(transaction);
 	}

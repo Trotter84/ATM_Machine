@@ -17,8 +17,7 @@ public class Server {
 			while (true) {
 				Socket clientSocket = serverSocket.accept(); // throws when closed
 				System.out.println("ESP32 connected: " + clientSocket.getInetAddress());
-				new Thread(() -> openCardReader(clientSocket, cardNum -> EsPayController.readCard(cardNum))).start();
-				stopServer();
+				new Thread(() -> openCardReader(clientSocket, cardNum -> EsPayController.getCardNum(cardNum))).start();
 			}
 		} catch (SocketException e) {
 			System.out.println("Server closed."); // expected when stopServer() is called

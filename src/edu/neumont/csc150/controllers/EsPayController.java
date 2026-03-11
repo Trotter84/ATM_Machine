@@ -14,13 +14,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 public class EsPayController {
-	private int clearScreen = 100;
+	private static final int CLEAR_SCREEN = 100;
 	private EsPayUI esPayUI;
 	private Bank bank;
 	private Person person;
 	private List<Person> persons;
 
-	private String currentCardNum = "";
+	private static String currentCardNum;
 
 	public EsPayController() {
 		esPayUI = new EsPayUI();
@@ -35,17 +35,17 @@ public class EsPayController {
 	}
 
 	private void mainMenuController() throws IOException {
-		String[] options = {"Read Card", "Create Person", "View Persons", "Create Account", "View Accounts"};
+		String[] options = {"Make Purchase", "Create Person", "View Persons", "Create Account", "View Accounts"};
 
 		do {
-			esPayUI.displayString("\n".repeat(clearScreen) + """
+			esPayUI.displayString("\n".repeat(CLEAR_SCREEN) + """
 					=================
 					--- Main Menu ---
 					=================""", Console.TextColor.CYAN
 			);
 			int choice = esPayUI.menuUI(Arrays.asList(options), true, true, Console.TextColor.BLUE);
 			switch (choice) {
-				case 1 -> startServer();
+				case 1 -> readCard();
 				case 2 -> createPerson();
 				case 3 -> viewPersons();
 				case 4 -> assignAccount();
@@ -59,6 +59,9 @@ public class EsPayController {
 		} while (true);
 	}
 
+	public static void getCardNum(String cardNum) {
+		currentCardNum = cardNum;
+	}
 
 	public void startServer() throws IOException {
 		try {
@@ -68,13 +71,59 @@ public class EsPayController {
 		}
 	}
 
-	public static void readCard(String cardNum) {
-		System.out.println("I made it: " + cardNum);
+	public void readCard() {
+		boolean unConfirmed = true;
+		do {
+			esPayUI.displayString("\n".repeat(CLEAR_SCREEN) + """
+					=====================
+					--- Make Purchase ---
+					=====================""", Console.TextColor.CYAN
+			);
+			int chargeAmount = esPayUI.getIntPrompt("How much is the charge?", 0, 10000, Console.TextColor.BLUE);
+
+			esPayUI.displayString("\n".repeat(CLEAR_SCREEN) + """
+					====================
+					--- All Accounts ---
+					====================""", Console.TextColor.CYAN
+			);
+			esPayUI.displayString("\nWho is making this purchase?", Console.TextColor.BLUE);
+			int choice = esPayUI.menuUI(bank.getAccounts(), false, false, Console.TextColor.YELLOW);
+			switch (choice) {
+				case 0:
+					return;
+				default:
+					Account currentAccount = bank.getAccounts().get(choice - 1);
+					try {
+						startServer();
+//						TODO: Move back later
+						currentAccount.swipeCard(chargeAmount);
+						if (currentAccount.getAccountID().equalsIgnoreCase(currentCardNum)) {
+						} else {
+							esPayUI.displayString("Sorry, an error occurred. Please try again.", Console.TextColor.RED);
+						}
+						Server.stopServer();
+					} catch (IOException ioe) {
+						new IOException(ioe);
+					}
+					esPayUI.displayString(currentAccount.toString(), Console.TextColor.YELLOW);
+					esPayUI.getStringPrompt("\ncontinue..", true, Console.TextColor.PURPLE);
+					break;
+			}
+			esPayUI.displayString("Would you like to create another purchase?", Console.TextColor.BLUE);
+			int secondChoice = esPayUI.getIntPrompt("""
+							1. yes
+							2. no""",
+					1, 2,
+					Console.TextColor.BLUE
+			);
+			if (secondChoice == 2) unConfirmed = false;
+		} while (unConfirmed);
 	}
+
 
 	private void createPerson() {
 		boolean isCorrect = false;
-		esPayUI.displayString("\n".repeat(clearScreen) + """
+		esPayUI.displayString("\n".repeat(CLEAR_SCREEN) + """
 				=====================
 				--- Create Person ---
 				=====================""", Console.TextColor.CYAN
@@ -100,7 +149,7 @@ public class EsPayController {
 	}
 
 	private void viewPersons() {
-		esPayUI.displayString("\n".repeat(clearScreen) + """
+		esPayUI.displayString("\n".repeat(CLEAR_SCREEN) + """
 				===================
 				--- All Persons ---
 				===================""", Console.TextColor.CYAN
@@ -112,7 +161,7 @@ public class EsPayController {
 	}
 
 	private void viewAccounts() {
-		esPayUI.displayString("\n".repeat(clearScreen) + """
+		esPayUI.displayString("\n".repeat(CLEAR_SCREEN) + """
 				====================
 				--- All Accounts ---
 				====================""", Console.TextColor.CYAN
@@ -126,7 +175,7 @@ public class EsPayController {
 
 	private void assignAccount() {
 		boolean unConfirmed = true;
-		esPayUI.displayString("\n".repeat(clearScreen) + """
+		esPayUI.displayString("\n".repeat(CLEAR_SCREEN) + """
 				==========================
 				--- Assign New Account ---
 				==========================""", Console.TextColor.CYAN
@@ -168,7 +217,7 @@ public class EsPayController {
 
 
 	private void devMode() {
-		esPayUI.displayString("\n".repeat(clearScreen) + """
+		esPayUI.displayString("\n".repeat(CLEAR_SCREEN) + """
 				=================
 				--- Dev Menu ---
 				=================""", Console.TextColor.RED

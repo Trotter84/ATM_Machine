@@ -63,7 +63,7 @@ public class Person {
 	protected void addAccount(Account account) {
 		setAccount(account);
 	}
-	
+
 	@Override
 	public String toString() {
 		return getFName() + ' ' + getLName();

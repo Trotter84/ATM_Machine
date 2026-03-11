@@ -52,7 +52,7 @@ public class Bank {
 	 */
 	public Account createAccount(Person owner, int initialDeposit) {
 
-		Account account = new Account(numGenerator(10), owner, initialDeposit);
+		Account account = new Account(owner, numGenerator(10), initialDeposit);
 		accounts.add(account);
 		owner.addAccount(account);
 		return account;
