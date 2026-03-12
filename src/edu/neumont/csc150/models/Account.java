@@ -103,14 +103,17 @@ public class Account {
 	}
 
 	private boolean deposit(int amount) {
-		if (amount > 0) {
-			setBalance(getBalance() + amount);
-			Receipt receipt = new Receipt(amount, createTimestamp());
-			receipts.add(receipt);
-			return true;
-		} else {
-			return false;
+		if (getCard() instanceof Refillable) {
+			if (amount > 0) {
+				setBalance(getBalance() + amount);
+				Receipt receipt = new Receipt(amount, createTimestamp());
+				receipts.add(receipt);
+				return true;
+			} else {
+				return false;
+			}
 		}
+		return false;
 	}
 
 	private boolean withdraw(int amount) {

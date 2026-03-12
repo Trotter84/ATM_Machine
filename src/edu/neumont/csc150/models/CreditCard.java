@@ -1,6 +1,6 @@
 package edu.neumont.csc150.models;
 
-public class CreditCard extends Card {
+public class CreditCard extends Card implements Refillable {
 	private float interestRate;
 
 	public CreditCard(Account accountHolder, String cardNum, float interestRate) {
@@ -21,7 +21,13 @@ public class CreditCard extends Card {
 	}
 
 	@Override
+	public boolean deposit() {
+		return false;
+	}
+
+	@Override
 	public String toString() {
 		return super.toString() + "\nInterest Rate: \n\t\t\t" + getInterestRate() + '%';
 	}
+
 }
