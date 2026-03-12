@@ -1,25 +1,22 @@
 package edu.neumont.csc150.models;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Currency;
 import java.util.Locale;
 import java.util.Random;
 
 
-public class Transaction {
+public class Receipt {
 	private String transactionID;
 	private float amount;
 	private String time;
 
-	public Transaction(float amount, String time) {
+	public Receipt(float amount, String time) {
 		setTransactionID(createTransactionID());
 		setAmount(amount);
 		setTime(time);
 	}
 
 //region =========== GETTERS||SETTERS ===========
-//TODO: set validators
 
 	public String getTransactionID() {
 		return transactionID;

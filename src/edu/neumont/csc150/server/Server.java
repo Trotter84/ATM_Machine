@@ -12,15 +12,15 @@ public class Server {
 
 	public static void run() throws IOException {
 		serverSocket = new ServerSocket(8080);
-		System.out.println("Waiting for ESP32 connection...");
+		System.out.println("Waiting for esPay POS connection...");
 		try {
 			while (true) {
 				Socket clientSocket = serverSocket.accept(); // throws when closed
-				System.out.println("ESP32 connected: " + clientSocket.getInetAddress());
+				System.out.println("esPay POS connected: " + clientSocket.getInetAddress());
 				new Thread(() -> openCardReader(clientSocket, cardNum -> EsPayController.getCardNum(cardNum))).start();
 			}
 		} catch (SocketException e) {
-			System.out.println("Server closed."); // expected when stopServer() is called
+			System.out.println("esPay POS connection closed."); // expected when stopServer() is called
 		}
 	}
 

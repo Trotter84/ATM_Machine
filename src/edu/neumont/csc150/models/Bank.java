@@ -11,11 +11,10 @@ public class Bank {
 	private Account account;
 	private List<Account> accounts;
 
-	//	for demo
-	private String[] availableUIDs = {
-			"f8 d7 cc 05", "39 38 d1 11", "ea da 27 02", "77 50 2b 15"
-	};
+	//region for testing
+	private String[] availableUIDs = {"f8 d7 cc 05", "39 38 d1 11", "ea da 27 02", "77 50 2b 15"};
 	static int availableUIDCount = 4;
+	//endregion
 
 	public Bank() {
 		setBalance(20580000);
@@ -23,7 +22,6 @@ public class Bank {
 	}
 
 //region =========== GETTERS||SETTERS ===========
-//TODO: set validators
 
 	public int getBalance() {
 		return balance;
@@ -67,14 +65,13 @@ public class Bank {
 	 */
 	public Card createCard(Account owner) {
 
-		Card card = new Card(owner, numGenerator(16));
+		Card card = new DebitCard(owner, numGenerator(16));
 		owner.setCard(card);
 		return card;
 	}
 
 	public boolean verifyCard(Card card, Account recipient) {
 		if (card.getCardNum() == recipient.getCard().getCardNum()) {
-//			TODO: call card action
 			return true;
 		}
 		return false;

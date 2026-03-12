@@ -14,10 +14,10 @@ public class Account {
 	private Person owner;
 	private int balance;
 	private Card card;
-	private List<Transaction> transactions;
+	private List<Receipt> receipts;
 
 	public Account(Person owner, String accountID, int balance) {
-		transactions = new ArrayList<>();
+		receipts = new ArrayList<>();
 
 		setOwner(owner);
 		setAccountID(accountID);
@@ -25,7 +25,6 @@ public class Account {
 	}
 
 //region =========== GETTERS||SETTERS ===========
-//TODO: set validators
 
 	public String getAccountID() {
 		return accountID;
@@ -43,35 +42,40 @@ public class Account {
 		return owner;
 	}
 
-	public void setOwner(Person owner) {
-		this.owner = owner;
+	private void setOwner(Person owner) {
+		if (owner != null) {
+			this.owner = owner;
+		}
 	}
 
 	public int getBalance() {
 		return balance;
 	}
 
-	public void setBalance(int balance) {
-		this.balance = balance;
+	private void setBalance(int balance) {
+		if (balance < 0) {
+			this.balance = 0;
+		} else {
+			this.balance = balance;
+		}
 	}
 
 	public Card getCard() {
 		return card;
 	}
 
-	//	TODO: Get Card set to owner
 	protected void setCard(Card card) {
 		if (this.card == null) {
 			this.card = card;
 		}
 	}
 
-	public List<Transaction> getTransactions() {
-		return transactions;
+	public List<Receipt> getTransactions() {
+		return receipts;
 	}
 
-	private void setTransactions(List<Transaction> transactions) {
-		this.transactions = transactions;
+	private void setTransactions(List<Receipt> receipts) {
+		this.receipts = receipts;
 	}
 
 	//endregion
@@ -89,24 +93,31 @@ public class Account {
 		return timestamp;
 	}
 
-	public void swipeCard(int amount) {
-		setBalance(getBalance() - amount);
-		Transaction transaction = new Transaction(amount, createTimestamp());
-		transactions.add(transaction);
+	public boolean chargeAccount(int amount) {
+		boolean status = withdraw(amount);
+		if (status) {
+			Receipt receipt = new Receipt(amount, createTimestamp());
+			receipts.add(receipt);
+		}
+		return status;
 	}
 
-	private boolean deposit() {
-//		if success
-		return true;
-//		if fail
-//		return false;
+	private boolean deposit(int amount) {
+		if (amount > 0) {
+			setBalance(getBalance() + amount);
+			Receipt receipt = new Receipt(amount, createTimestamp());
+			receipts.add(receipt);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	private boolean withdraw() {
-//		if success
-		return true;
-//		if fail
-//		return false;
+	private boolean withdraw(int amount) {
+		if (amount > 0 && amount <= getBalance()) {
+			setBalance(getBalance() - amount);
+			return true;
+		} else return false;
 	}
 
 	@Override
@@ -118,8 +129,8 @@ public class Account {
 		if (getCard() != null) {
 			string += "\n\tCard:\n\t\t" + getCard();
 		}
-		for (Transaction transaction : getTransactions()) {
-			string += "\n\n\tTransaction History:\n" + transaction;
+		for (Receipt receipt : getTransactions()) {
+			string += "\n\n\tTransaction History:\n" + receipt;
 		}
 		return string;
 	}

@@ -49,7 +49,7 @@ public class EsPayUI {
 		Console.writeln("\n".repeat(100) + logoLarge, Console.TextColor.BLUE);
 	}
 
-	public void quitUI() {
+	public void displaySmallLogo() {
 		Console.write("\n".repeat(100) + logoSmall, Console.TextColor.GREEN);
 	}
 }

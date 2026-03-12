@@ -14,11 +14,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 public class EsPayController {
-	private static final int CLEAR_SCREEN = 100;
+	//	TODO: IF NO ESP DEVICE, SET THIS TO FALSE
+	private boolean hasESP = true;
+
 	private EsPayUI esPayUI;
 	private Bank bank;
 	private Person person;
 	private List<Person> persons;
+	private static final int CLEAR_SCREEN = 100;
 
 	private static String currentCardNum;
 
@@ -94,10 +97,20 @@ public class EsPayController {
 				default:
 					Account currentAccount = bank.getAccounts().get(choice - 1);
 					try {
-						startServer();
-//						TODO: Move back later
-						currentAccount.swipeCard(chargeAmount);
+						esPayUI.displaySmallLogo();
+						if (hasESP) {
+							startServer();
+						}
+
+//						TODO: Move line below back if validation gets fixed
+						boolean status = currentAccount.chargeAccount(chargeAmount);
 						if (currentAccount.getAccountID().equalsIgnoreCase(currentCardNum)) {
+//							Issue with NFC card and validating UID with AccountID
+						} else {
+//							esPayUI.displayString("Sorry, an error occurred. Please try again.", Console.TextColor.RED);
+						}
+						if (status) {
+							esPayUI.displayString("Your charge was successful!", Console.TextColor.GREEN);
 						} else {
 							esPayUI.displayString("Sorry, an error occurred. Please try again.", Console.TextColor.RED);
 						}
@@ -109,7 +122,7 @@ public class EsPayController {
 					esPayUI.getStringPrompt("\ncontinue..", true, Console.TextColor.PURPLE);
 					break;
 			}
-			esPayUI.displayString("Would you like to create another purchase?", Console.TextColor.BLUE);
+			esPayUI.displayString("Would you like to make another purchase?", Console.TextColor.BLUE);
 			int secondChoice = esPayUI.getIntPrompt("""
 							1. yes
 							2. no""",
@@ -211,11 +224,13 @@ public class EsPayController {
 	}
 
 	private void quit() {
-		esPayUI.quitUI();
+		esPayUI.displaySmallLogo();
 		esPayUI.displayString("Have a great day!", Console.TextColor.PURPLE);
 	}
 
-
+	/**
+	 * Access through Main Menu by choosing option <b>6</b>.
+	 */
 	private void devMode() {
 		esPayUI.displayString("\n".repeat(CLEAR_SCREEN) + """
 				=================
@@ -239,15 +254,6 @@ public class EsPayController {
 				persons.add(person);
 			}
 			viewPersons();
-		}
-	}
-
-	//	TODO: Delete later.
-	public void shoppingSpree() {
-		Random random = new Random();
-		int testLength = 6;
-		for (int i = 0; i < testLength; i++) {
-			bank.getAccounts().get(0).swipeCard(random.nextInt(10000));
 		}
 	}
 }

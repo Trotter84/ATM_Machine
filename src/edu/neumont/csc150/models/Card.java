@@ -1,6 +1,6 @@
 package edu.neumont.csc150.models;
 
-public class Card {
+public abstract class Card {
 	private Account accountHolder;
 	private String cardNum;
 
@@ -9,9 +9,7 @@ public class Card {
 		setCardNum(cardNum);
 	}
 
-//region =========== GETTERS||SETTERS ===========
-//TODO: set validators
-
+	//region =========== GETTERS||SETTERS ===========
 	public Account getAccountHolder() {
 		return accountHolder;
 	}
@@ -34,7 +32,6 @@ public class Card {
 	public String toString() {
 		String string = "";
 		string += "Name:\n\t\t\t" + accountHolder.getOwner().getFName() + ' ' + accountHolder.getOwner().getLName();
-
 		string += "\n\t\tCard Number:\n\t\t\t" + getCardNum();
 
 		return string;
